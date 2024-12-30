@@ -183,7 +183,7 @@ Learn more in Mountpoint's configuration documentation (CONFIGURATION.md).\
         long,
         help = "Maximum time, in milliseconds, an endpoint can be idle before being destroyed [default: 0]",
         value_name = "N",
-        value_parser = value_parser!(u64).range(1..),
+        value_parser = value_parser!(u64).range(0..),
         help_heading = CLIENT_OPTIONS_HEADER
     )]
     pub max_endpoint_idle_ms: Option<u64>,
