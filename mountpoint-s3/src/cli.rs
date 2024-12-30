@@ -181,6 +181,15 @@ Learn more in Mountpoint's configuration documentation (CONFIGURATION.md).\
 
     #[clap(
         long,
+        help = "Maximum time, in milliseconds, an endpoint can be idle before being destroyed [default: 0]",
+        value_name = "N",
+        value_parser = value_parser!(u64).range(1..),
+        help_heading = CLIENT_OPTIONS_HEADER
+    )]
+    pub max_endpoint_idle_ms: Option<u64>,
+
+    #[clap(
+        long,
         help = "Maximum number of FUSE daemon threads",
         value_name = "N",
         default_value = "16",
@@ -812,6 +821,9 @@ pub fn create_s3_client(args: &CliArgs) -> anyhow::Result<(S3CrtClient, EventLoo
         .user_agent(user_agent);
     if let Some(interfaces) = &args.bind {
         client_config = client_config.network_interface_names(interfaces.clone());
+    }
+    if let Some(max_endpoint_idle_ms) = args.max_endpoint_idle_ms {
+        client_config = client_config.max_endpoint_idle_ms(max_endpoint_idle_ms);
     }
     if args.requester_pays {
         client_config = client_config.request_payer("requester");

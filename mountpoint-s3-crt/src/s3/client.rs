@@ -200,6 +200,12 @@ impl ClientConfig {
         self
     }
 
+    /// The maximum time an endpoint can remain idle before it is destroyed.
+    pub fn max_endpoint_idle_ms(&mut self, max_endpoint_idle_ms: u64) -> &mut Self {
+        self.inner.max_endpoint_idle_ms = max_endpoint_idle_ms;
+        self
+    }
+
     /// When set, this will cap the number of active connections. Otherwise, the client will
     /// determine this value based on throughput_target_gbps. (Recommended)
     pub fn max_active_connections_override(&mut self, max_active_connections_override: u32) -> &mut Self {

@@ -92,6 +92,7 @@ macro_rules! event {
 pub struct S3ClientConfig {
     auth_config: S3ClientAuthConfig,
     throughput_target_gbps: f64,
+    max_endpoint_idle_ms: u64,
     read_part_size: usize,
     write_part_size: usize,
     endpoint_config: EndpointConfig,
@@ -110,6 +111,7 @@ impl Default for S3ClientConfig {
         Self {
             auth_config: Default::default(),
             throughput_target_gbps: 10.0,
+            max_endpoint_idle_ms: 0,
             read_part_size: DEFAULT_PART_SIZE,
             write_part_size: DEFAULT_PART_SIZE,
             endpoint_config: EndpointConfig::new("us-east-1"),
@@ -165,6 +167,12 @@ impl S3ClientConfig {
         self
     }
 
+    /// Set the maximum time an endpoint can remain idle before it is destroyed
+    #[must_use = "S3ClientConfig follows a builder pattern"]
+    pub fn max_endpoint_idle_ms(mut self, max_endpoint_idle_ms: u64) -> Self {
+        self.max_endpoint_idle_ms = max_endpoint_idle_ms;
+        self
+    }
     /// Set the endpoint configuration for endpoint resolution
     #[must_use = "S3ClientConfig follows a builder pattern"]
     pub fn endpoint_config(mut self, endpoint_config: EndpointConfig) -> Self {
@@ -385,6 +393,7 @@ impl S3CrtClientInner {
             .retry_strategy(retry_strategy);
 
         client_config.throughput_target_gbps(config.throughput_target_gbps);
+        client_config.max_endpoint_idle_ms(config.max_endpoint_idle_ms);
 
         // max_part_size is 5GB or less depending on the platform (4GB on 32-bit)
         let max_part_size = cmp::min(5_u64 * 1024 * 1024 * 1024, usize::MAX as u64) as usize;
