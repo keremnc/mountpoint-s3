@@ -1264,8 +1264,8 @@ fn parse_perm_bits(perm_bit_str: &str) -> Result<u16, anyhow::Error> {
 /// Validate a bucket name. This isn't intended to be an exhaustive validation, just a quick filter
 /// to catch common CLI mistakes like using an S3 URI (`s3://bucket/`) or a path (`~/mnt`).
 fn parse_bucket_name(bucket_name: &str) -> anyhow::Result<String> {
-    if bucket_name.len() < 3 || bucket_name.len() > 255 {
-        return Err(anyhow!("bucket names must be 3-255 characters long"));
+    if bucket_name.len() < 2 || bucket_name.len() > 255 {
+        return Err(anyhow!("bucket names must be 2-255 characters long"));
     }
 
     if bucket_name.contains("s3://") {
